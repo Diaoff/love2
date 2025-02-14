@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情人节示爱</title>
+    <style>
+        /* 全局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #ff99cc, #ffccff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 爱心容器 */
+        .heart-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* 爱心样式 */
+        .heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            box-shadow: -10px 10px 90px #ff0000,
+                       inset -5px -5px 15px rgba(0,0,0,0.3),
+                       inset 5px 5px 15px rgba(255,255,255,0.3);
+            animation: heartColor 3s infinite alternate, heartRotate 4s linear infinite;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        /* 爱心上半部分 */
+        .heart::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            box-shadow: -10px -10px 90px #ff0000,
+                      inset -5px -5px 15px rgba(0,0,0,0.3),
+                      inset 5px 5px 15px rgba(255,255,255,0.3);
+            animation: heartColor 3s infinite alternate;
+            transform-style: preserve-3d;
+        }
+
+        /* 爱心右半部分 */
+        .heart::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            box-shadow: 10px 10px 90px #ff0000,
+                      inset -5px -5px 15px rgba(0,0,0,0.3),
+                      inset 5px 5px 15px rgba(255,255,255,0.3);
+            animation: heartColor 3s infinite alternate;
+            transform-style: preserve-3d;
+        }
+
+        /* 爱心跳动动画 */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(0.75);
+            }
+
+            20% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(0.75);
+            }
+
+            60% {
+                transform: scale(1);
+            }
+
+            80% {
+                transform: scale(0.75);
+            }
+
+            100% {
+                transform: scale(0.75);
+            }
+        }
+
+        /* 爱心颜色渐变动画 */
+        @keyframes heartColor {
+            0% {
+                background-color: #ff0000;
+                box-shadow: -10px 10px 90px #ff0000;
+            }
+
+            100% {
+                background-color: #ff6699;
+                box-shadow: -10px 10px 90px #ff6699;
+            }
+        }
+
+        /* 爱心自转动画 */
+        @keyframes heartRotate {
+            from {
+                transform: translate(-50%, -50%) rotate(-45deg) rotateY(0deg) rotateX(10deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(-45deg) rotateY(360deg) rotateX(10deg);
+            }
+        }
+
+        /* 示爱文字样式 */
+        .text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="heart-container">
+        <div class="heart"></div>
+        <div class="text">
+            <p>亲爱的杨Baby</p>
+            <p>情人节快乐！</p>
+            <p>你是我生命中最璀璨的星光，</p>
+            <p>愿与你相伴一生，永浴爱河。</p>
+        </div>
+    </div>
+</body>
+
+</html>
