@@ -1,157 +1,216 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>情人节示爱</title>
-    <style>
-        /* 全局样式 */
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(to bottom, #ff99cc, #ffccff);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    <title>杨Baby💕</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        love: {
+                            light: '#ff85a2',
+                            DEFAULT: '#ff3366',
+                            dark: '#cc0033'
+                        }
+                    },
+                    fontFamily: {
+                        romantic: ['Segoe UI', 'Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .heart-beat {
+                animation: heartbeat 1.5s infinite;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            .animate-float {
+                animation: float 6s ease-in-out infinite;
+            }
+            .animate-float-delay-1 {
+                animation: float 6s ease-in-out 1s infinite;
+            }
+            .animate-float-delay-2 {
+                animation: float 6s ease-in-out 2s infinite;
+            }
+            .bg-gradient-love {
+                background: linear-gradient(135deg, #ff99cc 0%, #ff6699 100%);
+            }
         }
 
-        /* 爱心容器 */
-        .heart-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            animation: heartbeat 1.5s infinite;
-        }
-
-        /* 爱心样式 */
-        .heart {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100px;
-            height: 100px;
-            background-color: #ff0000;
-            box-shadow: -10px 10px 90px #ff0000,
-                       inset -5px -5px 15px rgba(0,0,0,0.3),
-                       inset 5px 5px 15px rgba(255,255,255,0.3);
-            animation: heartColor 3s infinite alternate, heartRotate 4s linear infinite;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        /* 爱心上半部分 */
-        .heart::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: 0;
-            width: 100px;
-            height: 100px;
-            background-color: #ff0000;
-            border-radius: 50%;
-            box-shadow: -10px -10px 90px #ff0000,
-                      inset -5px -5px 15px rgba(0,0,0,0.3),
-                      inset 5px 5px 15px rgba(255,255,255,0.3);
-            animation: heartColor 3s infinite alternate;
-            transform-style: preserve-3d;
-        }
-
-        /* 爱心右半部分 */
-        .heart::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -50%;
-            width: 100px;
-            height: 100px;
-            background-color: #ff0000;
-            border-radius: 50%;
-            box-shadow: 10px 10px 90px #ff0000,
-                      inset -5px -5px 15px rgba(0,0,0,0.3),
-                      inset 5px 5px 15px rgba(255,255,255,0.3);
-            animation: heartColor 3s infinite alternate;
-            transform-style: preserve-3d;
-        }
-
-        /* 爱心跳动动画 */
         @keyframes heartbeat {
-            0% {
-                transform: scale(0.75);
-            }
-
-            20% {
-                transform: scale(1);
-            }
-
-            40% {
-                transform: scale(0.75);
-            }
-
-            60% {
-                transform: scale(1);
-            }
-
-            80% {
-                transform: scale(0.75);
-            }
-
-            100% {
-                transform: scale(0.75);
-            }
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
         }
 
-        /* 爱心颜色渐变动画 */
-        @keyframes heartColor {
-            0% {
-                background-color: #ff0000;
-                box-shadow: -10px 10px 90px #ff0000;
-            }
-
-            100% {
-                background-color: #ff6699;
-                box-shadow: -10px 10px 90px #ff6699;
-            }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
         }
 
-        /* 爱心自转动画 */
-        @keyframes heartRotate {
-            from {
-                transform: translate(-50%, -50%) rotate(-45deg) rotateY(0deg) rotateX(10deg);
-            }
-            to {
-                transform: translate(-50%, -50%) rotate(-45deg) rotateY(360deg) rotateX(10deg);
-            }
+        .heart {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            transform: rotate(-45deg);
+            background: linear-gradient(135deg, #ff3366 0%, #cc0033 100%);
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.6);
+            transition: all 0.3s ease;
         }
 
-        /* 示爱文字样式 */
-        .text {
+        .heart:before,
+        .heart:after {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff3366 0%, #cc0033 100%);
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.6);
+        }
+
+        .heart:before {
+            top: -50px;
+            left: 0;
+        }
+
+        .heart:after {
+            top: 0;
+            left: 50px;
+        }
+
+        .heart-container:hover .heart {
+            transform: rotate(-45deg) scale(1.1);
+            filter: brightness(1.1);
+        }
+
+        .heart-particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
         }
     </style>
 </head>
+<body class="bg-gradient-love min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- 背景爱心装饰 -->
+    <div class="absolute inset-0 overflow-hidden">
+        <i class="fa fa-heart absolute text-white/30 text-4xl animate-float" style="left: 10%; top: 15%"></i>
+        <i class="fa fa-heart absolute text-white/20 text-3xl animate-float-delay-1" style="left: 25%; top: 80%"></i>
+        <i class="fa fa-heart absolute text-white/25 text-2xl animate-float-delay-2" style="left: 80%; top: 20%"></i>
+        <i class="fa fa-heart absolute text-white/30 text-3xl animate-float" style="left: 70%; top: 75%"></i>
+        <i class="fa fa-heart absolute text-white/20 text-xl animate-float-delay-1" style="left: 40%; top: 90%"></i>
+        <i class="fa fa-heart absolute text-white/25 text-2xl animate-float-delay-2" style="left: 90%; top: 50%"></i>
+        <i class="fa fa-heart absolute text-white/30 text-xl animate-float" style="left: 5%; top: 50%"></i>
+        <i class="fa fa-heart absolute text-white/20 text-3xl animate-float-delay-1" style="left: 50%; top: 10%"></i>
+    </div>
 
-<body>
-    <div class="heart-container">
-        <div class="heart"></div>
-        <div class="text">
-            <p>亲爱的杨Baby</p>
-            <p>情人节快乐！</p>
-            <p>你是我生命中最璀璨的星光，</p>
-            <p>愿与你相伴一生，永浴爱河。</p>
+    <div class="relative z-10 text-center p-4">
+        <!-- 主爱心 -->
+        <div class="heart-container mx-auto w-40 h-40 flex items-center justify-center mb-8 heart-beat">
+            <div class="heart"></div>
+        </div>
+
+        <!-- 示爱文字 -->
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-lg border border-white/20 max-w-md mx-auto">
+            <h1 class="text-[clamp(1.8rem,5vw,2.5rem)] font-romantic font-bold text-white text-shadow mb-2">亲爱的杨Baby</h1>
+            <p class="text-[clamp(1.1rem,3vw,1.3rem)] font-romantic text-white text-shadow mb-3">情人节快乐！</p>
+            <p class="text-[clamp(0.95rem,2vw,1.1rem)] font-romantic text-white/90 text-shadow mb-2">你是我生命中最璀璨的星光</p>
+            <p class="text-[clamp(0.95rem,2vw,1.1rem)] font-romantic text-white/90 text-shadow">愿与你相伴一生，永浴爱河</p>
+            
+            <!-- 装饰性分隔线 -->
+            <div class="w-16 h-1 bg-white/50 rounded-full mx-auto my-4"></div>
+            
+            <!-- 装饰性图标 -->
+            <div class="flex justify-center space-x-4 text-white/80">
+                <i class="fa fa-heart heart-beat"></i>
+                <i class="fa fa-star animate-float"></i>
+                <i class="fa fa-heart heart-beat"></i>
+            </div>
         </div>
     </div>
-</body>
 
+    <script>
+        // 点击爱心产生粒子效果
+        document.querySelector('.heart-container').addEventListener('click', function(e) {
+            const heart = this.querySelector('.heart');
+            const rect = heart.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // 创建12个粒子
+            for (let i = 0; i < 12; i++) {
+                createParticle(centerX, centerY);
+            }
+        });
+        
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'heart-particle';
+            
+            // 随机大小
+            const size = Math.random() * 8 + 4;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // 随机位置
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 60 + 40;
+            const destX = x + Math.cos(angle) * distance;
+            const destY = y + Math.sin(angle) * distance;
+            
+            // 随机颜色
+            const hue = 340 + Math.random() * 40; // 红色范围
+            const saturation = 80 + Math.random() * 20;
+            const lightness = 60 + Math.random() * 20;
+            particle.style.backgroundColor = `hsla(${hue}, ${saturation}%, ${lightness}%, 0.8)`;
+            
+            // 添加到文档
+            document.body.appendChild(particle);
+            
+            // 设置初始位置
+            particle.style.left = `${x - size/2}px`;
+            particle.style.top = `${y - size/2}px`;
+            
+            // 显示粒子
+            particle.style.opacity = '1';
+            
+            // 动画
+            setTimeout(() => {
+                particle.style.transition = 'all 0.8s ease-out';
+                particle.style.left = `${destX - size/2}px`;
+                particle.style.top = `${destY - size/2}px`;
+                particle.style.opacity = '0';
+            }, 10);
+            
+            // 移除粒子
+            setTimeout(() => {
+                particle.remove();
+            }, 800);
+        }
+        
+        // 页面加载时添加淡入动画
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 1s ease-out';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
 </html>
+    
