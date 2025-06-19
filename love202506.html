@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摩斯密码表白器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF85A2',
+                        secondary: '#FFC2D1',
+                        accent: '#FFB3C6',
+                        light: '#FFF0F3',
+                        dark: '#FF9BBD',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .heart-beat {
+                animation: heartBeat 1s infinite;
+            }
+            .morse-dot {
+                animation: dot 0.5s ease-in-out;
+            }
+            .morse-dash {
+                animation: dash 1.5s ease-in-out;
+            }
+            .float-heart {
+                position: absolute;
+                opacity: 0;
+                animation: floatHeart 6s ease-in-out forwards;
+            }
+            .scale-in {
+                animation: scaleIn 0.5s ease-out forwards;
+            }
+            .fade-in {
+                animation: fadeIn 1s ease-out forwards;
+            }
+            .scale-out {
+                animation: scaleOut 0.5s ease-in forwards;
+            }
+            .fade-out {
+                animation: fadeOut 1s ease-in forwards;
+            }
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.2); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.2); }
+            70% { transform: scale(1); }
+        }
+
+        @keyframes dot {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+        }
+
+        @keyframes dash {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.5); }
+            75% { transform: scale(1.5); }
+        }
+
+        @keyframes floatHeart {
+            0% {
+                bottom: -10%;
+                opacity: 0;
+                transform: translateX(0) rotate(0deg);
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                bottom: 110%;
+                opacity: 0;
+                transform: translateX(var(--random-x)) rotate(var(--random-rotate));
+            }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(0); opacity: 0; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-light to-white min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden">
+    <!-- 背景爱心容器 -->
+    <div id="heart-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- 主容器 -->
+    <div id="main-container" class="relative z-10 flex flex-col items-center justify-center w-full max-w-md">
+        <!-- 爱心显示区域 -->
+        <div id="heart-display" class="text-[12rem] md:text-[16rem] text-primary mb-8 transition-all duration-500">
+            <i class="fa fa-heart"></i>
+        </div>
+
+        <!-- 提示文本 -->
+        <div id="hint-text" class="text-center mb-8 fade-in">
+            <p class="text-dark text-lg md:text-xl font-medium">爱心正在按照某种规律闪烁...</p>
+            <p class="text-dark/70 mt-2">你能破译这段密码的含义吗？</p>
+        </div>
+
+        <!-- 输入框和按钮 -->
+        <div id="input-container" class="w-full max-w-xs fade-in">
+            <input 
+                type="text" 
+                id="answer-input" 
+                placeholder="输入你破译的内容..." 
+                class="w-full px-4 py-3 rounded-full border-2 border-secondary focus:border-primary focus:outline-none transition-all text-dark placeholder:text-dark/40"
+            >
+            <button 
+                id="submit-btn" 
+                class="w-full mt-4 px-6 py-3 bg-primary hover:bg-dark text-white rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg font-medium"
+            >
+                确认答案
+            </button>
+        </div>
+
+        <!-- 结果显示区域 -->
+        <div id="result-container" class="text-center hidden fade-in">
+            <div id="result-text" class="text-[2rem] md:text-[3rem] font-bold text-primary mb-6">我也爱你❤️</div>
+            <button 
+                id="restart-btn" 
+                class="px-6 py-3 bg-primary hover:bg-dark text-white rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg font-medium"
+            >
+                再来一次
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 摩斯密码映射表
+        const morseCodeMap = {
+            '我': '···-·',
+            '爱': '·-··',
+            '你': '·-·'
+        };
+
+        // 字符间停顿时间（毫秒）
+        const INTER_CHAR_PAUSE = 1500;
+        // 字符内停顿时间（毫秒）
+        const INTER_SYMBOL_PAUSE = 500;
+
+        // DOM元素
+        const heartDisplay = document.getElementById('heart-display');
+        const hintText = document.getElementById('hint-text');
+        const inputContainer = document.getElementById('input-container');
+        const answerInput = document.getElementById('answer-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultText = document.getElementById('result-text');
+        const restartBtn = document.getElementById('restart-btn');
+        const heartContainer = document.getElementById('heart-container');
+
+        // 当前状态
+        let isPlaying = false;
+        let currentCharIndex = 0;
+        let currentSymbolIndex = 0;
+        let intervalId = null;
+        let answerSubmitted = false;
+
+        // 初始化
+        function init() {
+            createFloatingHearts();
+            startMorseAnimation();
+            
+            submitBtn.addEventListener('click', checkAnswer);
+            answerInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkAnswer();
+            });
+            restartBtn.addEventListener('click', restart);
+        }
+
+        // 创建漂浮的爱心
+        function createFloatingHearts() {
+            // 先清空容器
+            heartContainer.innerHTML = '';
+            
+            // 创建初始的爱心弹幕
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    createHeart();
+                }, i * 300);
+            }
+            
+            // 持续创建爱心
+            setInterval(createHeart, 500);
+        }
+
+        // 创建单个爱心
+        function createHeart() {
+            const heart = document.createElement('div');
+            const size = Math.floor(Math.random() * 30) + 15; // 15-44px
+            const color = ['primary', 'secondary', 'accent', 'dark'][Math.floor(Math.random() * 4)];
+            const left = Math.floor(Math.random() * 100);
+            const randomX = (Math.random() * 200 - 100) + 'px'; // -100px 到 100px
+            const randomRotate = (Math.random() * 360) + 'deg'; // 0 到 360 度
+            
+            heart.className = `float-heart text-${color}`;
+            heart.style.left = `${left}%`;
+            heart.style.fontSize = `${size}px`;
+            heart.style.setProperty('--random-x', randomX);
+            heart.style.setProperty('--random-rotate', randomRotate);
+            heart.innerHTML = '<i class="fa fa-heart"></i>';
+            
+            // 随机延迟消失
+            const duration = Math.floor(Math.random() * 3000) + 5000; // 5-8秒
+            heart.style.animationDuration = `${duration}ms`;
+            
+            heartContainer.appendChild(heart);
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                heart.remove();
+            }, duration);
+        }
+
+        // 开始摩斯密码动画
+        function startMorseAnimation() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            playNextSymbol();
+        }
+
+        // 播放下一个符号
+        function playNextSymbol() {
+            const chars = Object.keys(morseCodeMap);
+            
+            if (currentCharIndex >= chars.length) {
+                // 所有字符播放完毕，重新开始
+                currentCharIndex = 0;
+                setTimeout(playNextSymbol, INTER_CHAR_PAUSE);
+                return;
+            }
+            
+            const currentChar = chars[currentCharIndex];
+            const symbols = morseCodeMap[currentChar].split('');
+            
+            if (currentSymbolIndex >= symbols.length) {
+                // 当前字符的所有符号播放完毕，移动到下一个字符
+                currentCharIndex++;
+                currentSymbolIndex = 0;
+                setTimeout(playNextSymbol, INTER_CHAR_PAUSE);
+                return;
+            }
+            
+            const currentSymbol = symbols[currentSymbolIndex];
+            
+            // 添加动画类
+            heartDisplay.classList.remove('morse-dot', 'morse-dash');
+            void heartDisplay.offsetWidth; // 触发重绘
+            
+            if (currentSymbol === '·') {
+                heartDisplay.classList.add('morse-dot');
+                setTimeout(() => {
+                    currentSymbolIndex++;
+                    playNextSymbol();
+                }, 500);
+            } else if (currentSymbol === '-') {
+                heartDisplay.classList.add('morse-dash');
+                setTimeout(() => {
+                    currentSymbolIndex++;
+                    playNextSymbol();
+                }, 1500);
+            }
+        }
+
+        // 检查答案
+        function checkAnswer() {
+            if (answerSubmitted) return;
+            
+            const answer = answerInput.value.trim();
+            
+            if (answer === '我爱你') {
+                // 答案正确
+                showResult(true);
+            } else {
+                // 答案错误
+                answerInput.classList.add('border-red-400');
+                setTimeout(() => {
+                    answerInput.classList.remove('border-red-400');
+                }, 1000);
+            }
+        }
+
+        // 显示结果
+        function showResult(isCorrect) {
+            answerSubmitted = true;
+            
+            // 停止摩斯密码动画
+            isPlaying = false;
+            clearInterval(intervalId);
+            
+            // 隐藏输入区域
+            inputContainer.classList.add('fade-out');
+            hintText.classList.add('fade-out');
+            
+            // 创建大量爱心
+            createCelebrationHearts();
+            
+            // 显示结果
+            setTimeout(() => {
+                inputContainer.classList.add('hidden');
+                hintText.classList.add('hidden');
+                
+                resultContainer.classList.remove('hidden');
+                resultContainer.classList.add('fade-in');
+            }, 1000);
+        }
+
+        // 创建庆祝爱心
+        function createCelebrationHearts() {
+            // 清空现有爱心
+            heartContainer.innerHTML = '';
+            
+            // 快速创建大量爱心
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    createHeart();
+                }, i * 50);
+            }
+        }
+
+        // 重新开始
+        function restart() {
+            // 重置状态
+            answerSubmitted = false;
+            currentCharIndex = 0;
+            currentSymbolIndex = 0;
+            
+            // 隐藏结果区域
+            resultContainer.classList.add('fade-out');
+            
+            setTimeout(() => {
+                resultContainer.classList.add('hidden');
+                
+                // 显示输入区域
+                hintText.classList.remove('hidden', 'fade-out');
+                hintText.classList.add('fade-in');
+                
+                inputContainer.classList.remove('hidden', 'fade-out');
+                inputContainer.classList.add('fade-in');
+                
+                answerInput.value = '';
+                
+                // 重新开始摩斯密码动画
+                startMorseAnimation();
+                
+                // 重新开始背景爱心
+                createFloatingHearts();
+            }, 500);
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+    
