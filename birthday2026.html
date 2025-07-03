@@ -66,7 +66,7 @@
                 0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
                 20% { opacity: 1; }
                 80% { opacity: 1; }
-                100% { transform: translateY(calc(100% + 400px)) rotate(360deg); opacity: 0; }
+                100% { transform: translateY(calc(100% + 500px)) rotate(360deg); opacity: 0; }
             }
             .danmaku-left {
                 position: fixed;
@@ -202,6 +202,9 @@
             const frontStars = document.getElementById('front-stars');
             const backStars = document.getElementById('back-stars');
             
+            // 设置最大星星数量
+            const MAX_STARS = 50; 
+
             // 立即生成一批初始星星
             for (let i = 0; i < 15; i++) {
                 setTimeout(() => {
@@ -212,12 +215,14 @@
             
             // 设置定时器持续生成星星 - 永不停止
             setInterval(() => {
-                createStar(frontStars, '#fff');
-            }, 300); // 每300ms生成一个新星星
-            
+                if (frontStars.children.length < MAX_STARS) {
+                    createStar(frontStars, '#fff');
+                }
+            }, 600); // 每300ms生成一个新星星
+
             setInterval(() => {
                 createStar(backStars, '#FF69B4');
-            }, 300); // 每300ms生成一个新星星
+            }, 600); // 每300ms生成一个新星星
         }
         
         // 创建单个星星元素
@@ -245,6 +250,10 @@
             setTimeout(() => {
                 star.style.animation = `star-fall ${duration}s linear forwards ${delay}s`;
             }, 10); // 短暂延迟确保样式生效
+            // 从卡片上出去时移除dom
+            star.addEventListener('animationend', () => {
+                star.remove();
+            });
         }
         
         // 双向弹幕功能
